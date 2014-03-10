@@ -92,6 +92,7 @@ api.registerUser = function(req, res, next) {
           timestamps: {created: +new Date(), loggedIn: +new Date()}
         }
       };
+      user.language = req.language;
       user = new User(newUser);
       user.save(cb);
       ga.event('register', 'Local').send()
@@ -250,7 +251,9 @@ api.setupPassport = function(router) {
         },
         function(user, cb){
           if (user) return cb(null, user);
+
           user = new User({
+            language: req.language,
             auth: {
               facebook: req.user,
               timestamps: {created: +new Date(), loggedIn: +new Date()}
