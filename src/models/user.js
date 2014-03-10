@@ -348,11 +348,20 @@ UserSchema.pre('save', function(next) {
   // Populate new users with default content
   if (this.isNew){
     //TODO for some reason this doesn't work here: `_.merge(this, shared.content.userDefaults);`
-    this.habits = shared.content.userDefaults.habits;
-    this.dailys = shared.content.userDefaults.dailys;
-    this.todos = shared.content.userDefaults.todos;
-    this.rewards = shared.content.userDefaults.rewards;
-    this.tags = shared.content.userDefaults.tags;
+    var self = this;
+
+    _.each('habits', 'dailys', 'todos', 'rewards', 'tags', function(taskType){
+      self.taskType = _.map(shared.content.userDefaults[taskType], function(task){
+        var newTask = task;
+
+        // Render task's text and notes in user's language
+        newTask.text = task.text();
+        newTask.notes = task.notes();
+
+        return newTask;
+      });
+    });
+    
     // tasks automatically get id=helpers.uuid() from TaskSchema id.default, but tags are Schema.Types.Mixed - so we need to manually invoke here
     _.each(this.tags, function(tag){tag.id = shared.uuid();})
   }
