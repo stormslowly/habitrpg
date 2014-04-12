@@ -1,4 +1,5 @@
 // Only do the minimal amount of work before forking just in case of a dyno restart
+'use strict';
 var cluster = require("cluster");
 var _ = require('lodash');
 var nconf = require('nconf');
@@ -33,7 +34,7 @@ if (cluster.isMaster && (isDev || isProd)) {
   var server = http.createServer();
 
   // ------------  MongoDB Configuration ------------
-  mongoose = require('mongoose');
+  var mongoose = require('mongoose');
   var mongooseOptions = !isProd ? {} : {
     replset: { socketOptions: { keepAlive: 1, connectTimeoutMS: 30000 } },
     server: { socketOptions: { keepAlive: 1, connectTimeoutMS: 30000 } }
