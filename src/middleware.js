@@ -1,15 +1,15 @@
+'use strict';
 var nconf = require('nconf');
 var _ = require('lodash');
 var fs = require('fs');
 var path = require('path');
-var User = require('./models/user').model
+var User = require('./models/user').model;
 var limiter = require('connect-ratelimit');
 var logging = require('./logging');
 var domainMiddleware = require('domain-middleware');
-var cluster = require('cluster');
 
 module.exports.apiThrottle = function(app) {
-  if (nconf.get('NODE_ENV') !== 'production') return;
+  if (nconf.get('NODE_ENV') !== 'production') { return; }
   app.use(limiter({
     end:false,
     catagories:{
@@ -21,10 +21,12 @@ module.exports.apiThrottle = function(app) {
     }
   })).use(function(req,res,next){
     //logging.info(res.ratelimit);
-    if (res.ratelimit.exceeded) return res.json(429,{err:'Rate limit exceeded'});
+    if (res.ratelimit.exceeded){
+      return res.json(429,{err:'Rate limit exceeded'});
+    }
     next();
   });
-}
+};
 
 module.exports.domainMiddleware = function(server,mongoose) {
   return domainMiddleware({
@@ -36,9 +38,9 @@ module.exports.domainMiddleware = function(server,mongoose) {
     },
     killTimeout: 10000
   });
-}
+};
 
-module.exports.errorHandler = function(err, req, res, next) {
+module.exports.errorHandler = function(err, req, res) {
   //res.locals.domain.emit('error', err);
   // when we hit an error, send it to admin as an email. If no ADMIN_EMAIL is present, just send it to yourself (SMTP_USER)
   var stack = (err.stack ? err.stack : err.message ? err.message : err) +
@@ -52,32 +54,37 @@ module.exports.errorHandler = function(err, req, res, next) {
   var message = err.message ? err.message : err;
   message =  (message.length < 200) ? message : message.substring(0,100) + message.substring(message.length-100,message.length);
   res.json(500,{err:message}); //res.end(err.message);
-}
+};
 
 
 module.exports.forceSSL = function(req, res, next){
   var baseUrl = nconf.get("BASE_URL");
   // Note x-forwarded-proto is used by Heroku & nginx, you'll have to do something different if you're not using those
-  if (req.headers['x-forwarded-proto'] && req.headers['x-forwarded-proto'] !== 'https'
-    && nconf.get('NODE_ENV') === 'production'
-    && baseUrl.indexOf('https') === 0) {
+  if (req.headers['x-forwarded-proto'] &&
+      req.headers['x-forwarded-proto'] !== 'https' &&
+      nconf.get('NODE_ENV') === 'production' &&
+      baseUrl.indexOf('https') === 0) {
     return res.redirect(baseUrl + req.url);
   }
-  next()
-}
+  next();
+};
 
 module.exports.cors = function(req, res, next) {
   res.header("Access-Control-Allow-Origin", req.headers.origin || "*");
-  res.header("Access-Control-Allow-Methods", "OPTIONS,GET,POST,PUT,HEAD,DELETE");
-  res.header("Access-Control-Allow-Headers", "Content-Type,Accept,Content-Encoding,X-Requested-With,x-api-user,x-api-key");
-  if (req.method === 'OPTIONS') return res.send(200);
+  res.header("Access-Control-Allow-Methods",
+    "OPTIONS,GET,POST,PUT,HEAD,DELETE");
+  res.header("Access-Control-Allow-Headers",
+    "Content-Type,Accept,Content-Encoding,X-Requested-With,x-api-user,x-api-key");
+  if (req.method === 'OPTIONS'){
+    return res.send(200);
+  }
   return next();
 };
 
 var siteVersion = 1;
 
 module.exports.forceRefresh = function(req, res, next){
-  if(req.query.siteVersion && req.query.siteVersion != siteVersion){
+  if (req.query.siteVersion && req.query.siteVersion !== siteVersion){
     return res.json(400, {needRefresh: true});
   }
 
@@ -90,7 +97,7 @@ var walk = function(folder){
   var res = fs.readdirSync(folder);
 
   res.forEach(function(fileName){
-    file = folder + '/' + fileName;
+    var file = folder + '/' + fileName;
     if(fs.statSync(file).isDirectory()){
       walk(file);
     }else{
@@ -102,25 +109,28 @@ var walk = function(folder){
         fileName = relFolder + '/' + fileName;
       }
 
-      buildFiles[old] = fileName
+      buildFiles[old] = fileName;
     }
   });
-}
+};
 
 walk(path.join(__dirname, "/../build"));
 
 var getBuildUrl = function(url){
-  if(buildFiles[url]) return '/' + buildFiles[url];
-
+  if(buildFiles[url]){
+    return '/' + buildFiles[url];
+  }
   return '/' + url;
-}
+};
 
 var manifestFiles = require("../public/manifest.json");
 
 var getManifestFiles = function(page){
   var files = manifestFiles[page];
 
-  if(!files) throw new Error("Page not found!");
+  if(!files) {
+    throw new Error("Page not found!");
+  }
 
   var code = '';
 
@@ -135,9 +145,9 @@ var getManifestFiles = function(page){
       code += '<script type="text/javascript" src="' + getBuildUrl(file) + '"></script>';
     });
   }
-  
+
   return code;
-}
+};
 
 // Translations
 
@@ -155,7 +165,7 @@ var loadTranslations = function(locale){
 loadTranslations('en');
 
 fs.readdirSync(path.join(__dirname, "/../node_modules/habitrpg-shared/locales/")).forEach(function(file) {
-  if(file === 'en') return;
+  if(file === 'en') {return;}
   loadTranslations(file);
   // Merge missing strings from english
   _.defaults(translations[file], translations.en);
@@ -167,7 +177,7 @@ var avalaibleLanguages = _.map(langCodes, function(langCode){
   return {
     code: langCode,
     name: translations[langCode].languageName
-  }
+  };
 });
 
 // Load MomentJS localization files
@@ -202,29 +212,29 @@ var getUserLanguage = function(req, callback){
 
   if(req.session && req.session.userId){
     User.findOne({_id: req.session.userId}, function(err, user){
-      if(err) return callback(err);
+      if(err) {return callback(err);}
       if(user && user.preferences.language && translations[user.preferences.language]){
         return callback(null, _.find(avalaibleLanguages, {code: user.preferences.language}));
       }else{
         var langCode = getFromBrowser();
         // Because english is usually always avalaible as an acceptable language for the browser,
         // if the user visit the page when his own language is not avalaible yet
-        // he'll have english set in his preferences, which is not good. 
+        // he'll have english set in his preferences, which is not good.
         //if(user && translations[langCode]){
           //user.preferences.language = langCode;
           //user.save(); //callback?
         //}
-        return callback(null, _.find(avalaibleLanguages, {code: langCode}))
+        return callback(null, _.find(avalaibleLanguages, {code: langCode}));
       }
     });
   }else{
     return callback(null, _.find(avalaibleLanguages, {code: getFromBrowser()}));
   }
-}
+};
 
 module.exports.locals = function(req, res, next) {
   getUserLanguage(req, function(err, language){
-    if(err) return res.json(500, {err: err});
+    if(err) {return res.json(500, {err: err});}
 
     var isStaticPage = req.url.split('/')[1] === 'static'; // If url contains '/static/'
 
@@ -246,13 +256,13 @@ module.exports.locals = function(req, res, next) {
       translations: translations[language.code],
       t: function(stringName, vars){
         var string = translations[language.code][stringName];
-        if(!string) return _.template(translations[language.code].stringNotFound, {string: stringName});
+        if(!string) {return _.template(translations[language.code].stringNotFound, {string: stringName});}
 
         return vars === undefined ? string : _.template(string, vars);
       },
       siteVersion: siteVersion
-    }
+    };
 
     next();
   });
-}
+};

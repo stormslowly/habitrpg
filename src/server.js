@@ -40,7 +40,7 @@ if (cluster.isMaster && (isDev || isProd)) {
     server: { socketOptions: { keepAlive: 1, connectTimeoutMS: 30000 } }
   };
   mongoose.connect(nconf.get('NODE_DB_URI'), mongooseOptions, function(err) {
-    if (err) throw err;
+    if (err) {throw err;}
     logging.info('Connected with Mongoose');
   });
   // load schemas & models
@@ -49,8 +49,7 @@ if (cluster.isMaster && (isDev || isProd)) {
   require('./models/user');
 
   // ------------  Passport Configuration ------------
-  var passport = require('passport')
-  var util = require('util')
+  var passport = require('passport');
   var FacebookStrategy = require('passport-facebook').Strategy;
   // Passport session setup.
   //   To support persistent login sessions, Passport needs to be able to
@@ -61,11 +60,11 @@ if (cluster.isMaster && (isDev || isProd)) {
   //   and deserialized.
   passport.serializeUser(function(user, done) {
       done(null, user);
-  });
+    });
 
   passport.deserializeUser(function(obj, done) {
       done(null, obj);
-  });
+    });
 
   // Use the FacebookStrategy within Passport.
   //   Strategies in Passport require a `verify` function, which accept
@@ -75,7 +74,7 @@ if (cluster.isMaster && (isDev || isProd)) {
       clientID: nconf.get("FACEBOOK_KEY"),
       clientSecret: nconf.get("FACEBOOK_SECRET"),
       callbackURL: nconf.get("BASE_URL") + "/auth/facebook/callback"
-  },
+    },
     function(accessToken, refreshToken, profile, done) {
         // asynchronous verification, for effect...
         //process.nextTick(function () {
@@ -86,27 +85,38 @@ if (cluster.isMaster && (isDev || isProd)) {
         // and return that user instead.
         return done(null, profile);
         //});
-    }
+      }
    ));
 
   // ------------  Server Configuration ------------
 
   app.set("port", nconf.get('PORT'));
   middleware.apiThrottle(app);
-  app.use(middleware.domainMiddleware(server,mongoose));
-  if (!isProd) app.use(express.logger("dev"));
+  app.use( middleware.domainMiddleware(server,mongoose) );
+
+  if (!isProd){
+    app.use(express.logger("dev"));
+  }
   app.use(express.compress());
   app.set("views", __dirname + "/../views");
   app.set("view engine", "jade");
   app.use(express.favicon());
+
   app.use(middleware.cors);
   app.use(middleware.forceSSL);
+
   app.use(express.urlencoded());
   app.use(express.json());
   app.use(express.methodOverride());
-  //app.use(express.cookieParser(nconf.get('SESSION_SECRET')));
   app.use(express.cookieParser());
-  app.use(express.cookieSession({ secret: nconf.get('SESSION_SECRET'), httpOnly: false, cookie: { maxAge: TWO_WEEKS }}));
+  app.use(express.cookieSession({
+    secret: nconf.get('SESSION_SECRET'),
+    httpOnly: false,
+    cookie: {
+      maxAge: TWO_WEEKS
+    }
+  }));
+
   //app.use(express.session());
 
   // Initialize Passport!  Also use passport.session() middleware, to support
@@ -116,6 +126,7 @@ if (cluster.isMaster && (isDev || isProd)) {
 
   app.use(app.router);
 
+  // static files handling
   var maxAge = isProd ? 31536000000 : 0;
   // Cache emojis without copying them to build, they are too many
   app.use(express['static'](path.join(__dirname, "/../build"), { maxAge: maxAge }));

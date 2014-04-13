@@ -1,13 +1,16 @@
-var nconf = require('nconf');
+'use strict';
 var express = require('express');
 var router = new express.Router();
-var _ = require('lodash');
-var middleware = require('../middleware')
+var middleware = require('../middleware');
 
 // -------- App --------
 router.get('/', middleware.locals, function(req, res) {
-  if (!req.headers['x-api-user'] && !req.headers['x-api-key'] && !(req.session && req.session.userId))
-    return res.redirect('/static/front')
+  if (!req.headers['x-api-user'] &&
+      !req.headers['x-api-key'] &&
+      !(req.session && req.session.userId)){
+
+    return res.redirect('/static/front');
+  }
 
   return res.render('index', {
     title: 'HabitRPG | Your Life, The Role Playing Game',

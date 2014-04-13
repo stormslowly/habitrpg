@@ -1,3 +1,4 @@
+'use strict';
 var nodemailer = require('nodemailer');
 var nconf = require('nconf');
 var crypto = require('crypto');
@@ -14,12 +15,15 @@ module.exports.sendEmail = function(mailData) {
     }
   });
   smtpTransport.sendMail(mailData, function(error, response){
-      var logging = require('./logging');
-    if(error) logging.error(error);
-    else logging.info("Message sent: " + response.message);
+    var logging = require('./logging');
+    if(error) {
+      logging.error(error);
+    }else {
+      logging.info("Message sent: " + response.message);
+    }
     smtpTransport.close(); // shut down the connection pool, no more messages
   });
-}
+};
 
 // Encryption using http://dailyjs.com/2010/12/06/node-tutorial-5/
 // Note: would use [password-hash](https://github.com/davidwood/node-password-hash), but we need to run
@@ -27,12 +31,12 @@ module.exports.sendEmail = function(mailData) {
 
 module.exports.encryptPassword = function(password, salt) {
   return crypto.createHmac('sha1', salt).update(password).digest('hex');
-}
+};
 
 module.exports.makeSalt = function() {
   var len = 10;
   return crypto.randomBytes(Math.ceil(len / 2)).toString('hex').substring(0, len);
-}
+};
 
 /**
  * Load nconf and define default configuration values if config.json or ENV vars are not found
@@ -40,13 +44,14 @@ module.exports.makeSalt = function() {
 module.exports.setupConfig = function(){
   nconf.argv()
     .env()
-    //.file('defaults', path.join(path.resolve(__dirname, '../config.json.example')))
     .file('user', path.join(path.resolve(__dirname, '../config.json')));
 
-  if (nconf.get('NODE_ENV') === "development")
+  if (nconf.get('NODE_ENV') === "development"){
     Error.stackTraceLimit = Infinity;
-  if (nconf.get('NODE_ENV') === 'production')
+  }
+  if (nconf.get('NODE_ENV') === 'production'){
     require('newrelic');
+  }
 
   module.exports.ga = require('universal-analytics')(nconf.get('GA_ID'));
 };
