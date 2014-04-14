@@ -84,5 +84,7 @@
     // Custom Globals
     "globals": {"describe":true,
                 "it": true,
-                "JSON": true} // additional predefined global variables
+                "JSON": true,
+                "window": true,
+                "angular": true} // additional predefined global variables
 }
