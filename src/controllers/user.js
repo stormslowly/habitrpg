@@ -1,3 +1,4 @@
+'use strict';
 /* @see ./routes.coffee for routing*/
 
 var url = require('url');
@@ -21,7 +22,7 @@ var api = module.exports;
 
 api.getContent = function(req, res, next) {
   res.json(shared.content);
-}
+};
 
 /*
   ------------------------------------------------------------------------
@@ -35,8 +36,9 @@ api.getContent = function(req, res, next) {
   ---------------
 */
 
-findTask = function(req, res, next) {
-  return task = res.locals.user.tasks[req.params.id];
+api.findTask = function(req, res, next) {
+  var task = res.locals.user.tasks[req.params.id];
+  return task;
 };
 
 /*
@@ -49,19 +51,23 @@ findTask = function(req, res, next) {
   Export it also so we can call it from deprecated.coffee
 */
 api.score = function(req, res, next) {
+
   var id = req.params.id,
     direction = req.params.direction,
     user = res.locals.user,
     task;
 
   // Send error responses for improper API call
-  if (!id) return res.json(400, {err: ':id required'});
+  if (!id){
+    return res.json(400, {err: ':id required'});
+  }
   if (direction !== 'up' && direction !== 'down') {
-    if (direction == 'unlink') return next();
+    if (direction === 'unlink') {return next();}
     return res.json(400, {err: ":direction must be 'up' or 'down'"});
   }
   // If exists already, score it
-  if (task = user.tasks[id]) {
+  task = user.tasks[id];
+  if (task) {
     // Set completed if type is daily or todo and task exists
     if (task.type === 'daily' || task.type === 'todo') {
       task.completed = direction === 'up';
@@ -76,13 +82,14 @@ api.score = function(req, res, next) {
       notes: (req.body && req.body.notes) || "This task was created by a third-party service. Feel free to edit, it won't harm the connection to that service. Additionally, multiple services may piggy-back off this task."
     };
     task = user.ops.addTask({body:task});
-    if (task.type === 'daily' || task.type === 'todo')
+    if (task.type === 'daily' || task.type === 'todo'){
       task.completed = direction === 'up';
+    }
   }
   var delta = user.ops.score({params:{id:task.id, direction:direction}});
 
   user.save(function(err,saved){
-    if (err) return next(err);
+    if (err) {return next(err);}
     // TODO this should be return {_v,task,stats,_tmp}, instead of merging everything togther at top-level response
     // However, this is the most commonly used API route, and changing it will mess with all 3rd party consumers. Bad idea :(
     res.json(200, _.extend({
@@ -92,21 +99,35 @@ api.score = function(req, res, next) {
 
     // If it's a challenge task, sync the score. Do it in the background, we've already sent down a response
     // and the user doesn't care what happens back there
-    if (!task.challenge || !task.challenge.id || task.challenge.broken) return;
-    if (task.type == 'reward') return; // we don't want to update the reward GP cost
-    Challenge.findById(task.challenge.id, 'habits dailys todos rewards', function(err, chal){
-      if (err) return next(err);
-      if (!chal) {
-        task.challenge.broken = 'CHALLENGE_DELETED';
-        return user.save();
-      }
-      var t = chal.tasks[task.id];
-      if (!t) return chal.syncToUser(user); // this task was removed from the challenge, notify user
-      t.value += delta;
-      if (t.type == 'habit' || t.type == 'daily')
-        t.history.push({value: t.value, date: +new Date});
-      chal.save();
-    });
+    if (!task.challenge || !task.challenge.id || task.challenge.broken) {
+      return;
+    }
+
+    if (task.type === 'reward') {
+      // we don't want to update the reward GP cost
+      return;
+    }
+
+    Challenge.findById(task.challenge.id,
+      'habits dailys todos rewards',
+      function(err, chal){
+        if (err) {return next(err);}
+        if (!chal) {
+          task.challenge.broken = 'CHALLENGE_DELETED';
+          return user.save();
+        }
+        var t = chal.tasks[task.id];
+        if (!t) {
+          return chal.syncToUser(user);
+        }
+
+        // this task was removed from the challenge, notify user
+        t.value += delta;
+        if (t.type === 'habit' || t.type === 'daily'){
+          t.history.push({value: t.value, date: +new Date()});
+        }
+        chal.save();
+      });
   });
 };
 
@@ -127,7 +148,9 @@ api.getTasks = function(req, res, next) {
  */
 api.getTask = function(req, res, next) {
   var task = findTask(req,res);
-  if (!task) return res.json(404, {err: "No task found."});
+  if (!task){
+    return res.json(404, {err: "No task found."});
+  }
   return res.json(200, task);
 };
 

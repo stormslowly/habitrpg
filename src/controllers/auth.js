@@ -176,7 +176,8 @@ api.loginFacebook = function(req, res) {
 api.resetPassword = function(req, res, next){
   var email = req.body.email,
     salt = utils.makeSalt(),
-    newPassword =  utils.makeSalt(), // use a salt as the new password too (they'll change it later)
+    // use a salt as the new password too (they'll change it later)
+    newPassword =  utils.makeSalt(),
     hashed_password = utils.encryptPassword(newPassword, salt);
 
   User.findOne({'auth.local.email':email}, function(err, user){
