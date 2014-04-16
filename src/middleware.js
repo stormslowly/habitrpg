@@ -80,13 +80,12 @@ module.exports.cors = function(req, res, next) {
   }
   return next();
 };
-
-var siteVersion = 1;
+// must be a string, front end query is string
+var siteVersion = '1';
 
 module.exports.forceRefresh = function(req, res, next){
-  console.log("debug=>",req.query.siteVersion)
   if (req.query.siteVersion && req.query.siteVersion !== siteVersion){
-    return res.json(200, {needRefresh: true});
+    return res.json(400, {needRefresh: true});
   }
 
   return next();
