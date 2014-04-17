@@ -7,3 +7,4 @@ before_script:
   - 'npm install -g grunt-cli mocha'
   - export DISPLAY=:99.0
   - cp config.json.example config.json
+  - grunt build:dev
