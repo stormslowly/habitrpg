@@ -59,21 +59,22 @@ describe('API', function () {
       email: randomID + "@gmail.com"
     })
     .end(function (res) {
-      if (!main) return cb(null, res.body);
+      if (!main) {return cb(null, res.body);}
 
       _id = res.body._id;
       apiToken = res.body.apiToken;
       User.findOne({_id: _id,
-                   apiToken: apiToken},
-                   function (err, _user) {
-                     expect(err).to.not.be.ok();
-                     user = _user;
-                     request
-                     .set('Accept', 'application/json')
-                     .set('X-API-User', _id)
-                     .set('X-API-Key', apiToken);
-                     cb(null, res.body);
-                   });
+                    apiToken: apiToken},
+                    function (err, _user) {
+                      expect(err).to.not.be.ok();
+                      user = _user;
+                      request
+                       .set('Accept', 'application/json')
+                       .set('X-API-User', _id)
+                       .set('X-API-Key', apiToken);
+                      cb(null, res.body);
+                    }
+                  );
     });
   };
 
@@ -162,11 +163,11 @@ describe('API', function () {
             .end(function(res){
               expect(_.size(res.body.todos)).to.be(2);
               done();
-            })
-          })
+            });
+          });
         });
       });
-    })
+    });
 
     /**
      * GROUPS
@@ -184,9 +185,9 @@ describe('API', function () {
             expect(group.members.length).to.be(1);
             expect(group.leader).to.be(user._id);
             done();
-            });
           });
-        })
+        });
+      });
 
       describe('Challenges', function () {
         var challenge, updateTodo;
