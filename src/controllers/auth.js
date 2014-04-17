@@ -78,7 +78,8 @@ api.registerUser = function(req, res) {
         return cb("Email already taken");
       }
       User.findOne({'auth.local.username': username}, cb);
-    }, function(found, cb) {
+    },
+    function(found, cb) {
       var newUser, salt, user;
       if (found) {
         return cb("Username already taken");

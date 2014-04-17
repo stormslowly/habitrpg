@@ -436,7 +436,7 @@ api.removeMember = function(req, res, next){
   var group = res.locals.group;
   var uuid = req.query.uuid;
   var user = res.locals.user;
-  
+
   if(group.leader !== user._id){
     return res.json(401, {err: "Only group leader can remove a member!"});
   }
@@ -444,7 +444,7 @@ api.removeMember = function(req, res, next){
   if(_.contains(group.members, uuid)){
     Group.update({_id:group._id},{$pull:{members:uuid},$inc:{memberCount:-1}}, function(err, saved){
       if (err) return next(err);
-      
+
       // Sending an empty 204 because Group.update doesn't return the group
       // see http://mongoosejs.com/docs/api.html#model_Model.update
       return res.send(204);
@@ -483,7 +483,7 @@ api.removeMember = function(req, res, next){
 // Quests
 // ------------------------------------
 
-questStart = function(req, res, next) {
+var questStart = function(req, res, next) {
   var group = res.locals.group;
   var user = res.locals.user;
   var force = req.query.force;

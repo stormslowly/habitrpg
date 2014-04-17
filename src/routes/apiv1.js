@@ -1,3 +1,4 @@
+'use strict';
 var express = require('express');
 var router = new express.Router();
 var _ = require('lodash');
@@ -20,7 +21,7 @@ router.post('/v1/users/:uid/tasks/:taskId/:direction', initDeprecated, auth.auth
 
 // FIXME add this back in
 router.get('/v1/users/:uid/calendar.ics', function(req, res, next) {
-  return next() //disable for now
+  return next(); //disable for now
 
   var apiToken, model, query, uid;
   uid = req.params.uid;
@@ -119,7 +120,7 @@ var batchUpdate = function(req, res, next) {
   async.series(actions, function(err) {
     res.json = oldJson;
     res.send = oldSend;
-    if (err) return res.json(500, {err: err});
+    if (err) { return res.json(500, {err: err}); }
     var response = user.toJSON();
     response.wasModified = res.locals.wasModified;
     if (response._tmp && response._tmp.drop){

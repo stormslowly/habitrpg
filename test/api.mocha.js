@@ -7,34 +7,35 @@ var expect = require('expect.js');
 var async = require('async');
 var diff = require('deep-diff');
 var superagentDefaults = require('superagent-defaults');
+var path = require('path');
 
 var request = superagentDefaults();
 
 var conf = require('nconf');
-conf.argv().env().file({file: __dirname + '../config.json'}).defaults();
-conf.set('port','1337');
+conf.
+  argv().
+  env().
+  file({file: path.join(__dirname, '../config.json')}).
+  defaults();
 
-// Override normal ENV values with nconf ENV values (ENV values are used the same way without nconf)
-// FIXME can't get nconf file above to load...
-process.env.BASE_URL = conf.get("BASE_URL");
-process.env.FACEBOOK_KEY = conf.get("FACEBOOK_KEY");
-process.env.FACEBOOK_SECRET = conf.get("FACEBOOK_SECRET");
-process.env.NODE_DB_URI = 'mongodb://localhost/habitrpg';
+conf.set('PORT','1337');
+conf.set('NODE_DB_URI','mongodb://localhost/habitrpg_test');
+
 
 var User = require('../src/models/user').model;
 var Group = require('../src/models/group').model;
 var Challenge = require('../src/models/challenge').model;
 
-var app = require('../src/server');
 var shared = require('habitrpg-shared');
 
 // ###### Helpers & Variables ######
 var model, uuid, taskPath,
-baseURL = 'http://localhost:3000/api/v2';
+baseURL = 'http://localhost:1337/api/v2';
 
 var expectCode = function (res, code) {
-  if (code == 200)
+  if (code === 200){
     expect(res.body.err).to.be(undefined);
+  }
   expect(res.statusCode).to.be(code);
 };
 
@@ -42,7 +43,7 @@ describe('API', function () {
   var user, _id, apiToken, username, password;
 
   var registerNewUser = function(cb, main) {
-    if (main === undefined) main = true;
+    if (main === undefined) {main = true;}
 
     var randomID = shared.uuid();
     if (main) {
@@ -76,14 +77,28 @@ describe('API', function () {
     });
   };
 
-  before(function (done) {
-    require('../src/server'); // start the server
-    // then wait for it to do it's thing. TODO make a cb-compatible export of server
-    setTimeout(done, 2000);
+  var server = null;
+
+  before( function (done) {
+    server = require('../src/habitrpgServer.js').
+      // createServer(null, conf);
+      createServer(function noopLogger(req,res,next){next();}, conf);
+
+    server.startService(function (){
+      done();
+    });
+  });
+
+  after(function(done){
+    server.shutdown( function(){
+      done();
+      server = null;
+    });
   });
 
   describe('Without token or user id', function () {
     it('/api/v2/status', function (done) {
+
       request.get(baseURL + "/status")
       .set('Accept', 'application/json')
       .end(function (res) {

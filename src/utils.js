@@ -53,5 +53,6 @@ module.exports.setupConfig = function(){
     require('newrelic');
   }
 
-  module.exports.ga = require('universal-analytics')(nconf.get('GA_ID'));
 };
+
+module.exports.ga = require('universal-analytics')(nconf.get('GA_ID'));

@@ -1,12 +1,17 @@
 // Only do the minimal amount of work before forking just in case of a dyno restart
 'use strict';
-var nconf = require('nconf');
 var utils = require('./utils');
-utils.setupConfig();
-var logging = require('./logging');
-var isProd = nconf.get('NODE_ENV') === 'production';
+var logging = require('./logging.js');
 
-exports.createServer = function(){
+exports.createServer = function(logger,nconf){
+
+  if(!nconf){
+    nconf = require('nconf');
+    utils.setupConfig();
+  }
+
+
+  var isProd = nconf.get('NODE_ENV') === 'production';
 
   require('coffee-script'); // remove this once we've fully converted over
   var express = require("express");
@@ -66,8 +71,9 @@ exports.createServer = function(){
   middleware.apiThrottle(app);
   app.use( middleware.domainMiddleware(server,mongoose) );
 
+
   if (!isProd){
-    app.use(express.logger("dev"));
+    app.use(logger || express.logger("dev"));
   }
   app.use(express.compress());
   app.set("views", __dirname + "/../views");
@@ -110,7 +116,7 @@ exports.createServer = function(){
   app.use(require('./routes/auth').middleware);
   var v2 = express();
   app.use('/api/v2', v2);
-  app.use('/api/v1', require('./routes/apiv1').middleware);
+  // app.use('/api/v1', require('./routes/apiv1').middleware);
   app.use('/export', require('./routes/dataexport').middleware);
   require('./routes/apiv2.coffee')(swagger, v2);
   app.use(middleware.errorHandler);
@@ -138,25 +144,41 @@ exports.createServer = function(){
 
         return cb&&cb();
       }
-
     }
 
     function DBCallback(err){
-      if (err) {throw err;}
 
+      if (err) {throw err;}
       mongodb_ready = true;
       all();
     }
 
-    function netCallback(){
+    function netCallback(err){
+      if (err) {throw err;}
       netService_ready = true;
-
       all();
     }
 
     mongoose.connect(nconf.get('NODE_DB_URI'), mongooseOptions, DBCallback);
     server.listen(app.get("port"), netCallback);
   };
+
+  server.shutdown = function(cb) {
+
+    var called = 1;
+
+    mongoose.connection.close();
+
+    server.close(function(){
+      called += 1;
+      if (called === 2){
+        return cb&&cb();
+      }
+    });
+
+
+  };
+
 
   return server;
 

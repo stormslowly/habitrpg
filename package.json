@@ -13,7 +13,7 @@
     "stripe": "*",
     "coffee-script": "1.6.x",
     "nconf": "*",
-    "icalendar": "git://github.com/lefnire/node-icalendar#master",
+    "icalendar": "git://github.com/stormslowly/node-icalendar#master",
     "resolve": "~0.2.3",
     "lodash": "~2.2.1",
     "async": "~0.2.9",
@@ -87,7 +87,6 @@
     "expect.js": "~0.2.0",
     "superagent": "~0.15.7",
     "superagent-defaults": "~0.1.5",
-    "git-changelog": "colegleason/git-changelog",
     "deep-diff": "~0.1.4"
   }
 }

@@ -17,6 +17,7 @@ var Challenge = require('./../models/challenge').model;
 var logging = require('./../logging');
 var acceptablePUTPaths;
 var api = module.exports;
+var moment = require('moment');
 
 // api.purchase // Shared.ops
 
