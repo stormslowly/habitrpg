@@ -7,8 +7,10 @@
 angular.module('groupServices', ['ngResource']).
     factory('Groups', ['API_URL', '$resource', '$q', '$http', 'User',
       function(API_URL, $resource, $q, $http, User) {
+
         var Group = $resource(API_URL + '/api/v2/groups/:gid',
           {gid:'@_id', messageId: '@_messageId'},
+
           {
             //query: {method: "GET", isArray:false},
             postChat: {method: "POST", url: API_URL + '/api/v2/groups/:gid/chat'},

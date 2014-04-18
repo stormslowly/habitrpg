@@ -10,8 +10,8 @@ describe('Auth Controller', function() {
     beforeEach(inject(function(_$httpBackend_, $rootScope, $controller) {
       $httpBackend = _$httpBackend_;
       scope = $rootScope.$new();
-      scope.loginUsername = 'user'
-      scope.loginPassword = 'pass'
+      scope.loginUsername = 'user';
+      scope.loginPassword = 'pass';
       $window = { location: { href: ""}, alert: sinon.spy() };
       user = { user: {}, authenticate: sinon.spy() };
 

@@ -61,7 +61,7 @@
     "validthis": false, // true: Tolerate using this in a non-constructor function
 
     // Environments
-    "browser": false, // Web Browser (window, document, etc)
+    "browser": true, // Web Browser (window, document, etc)
     "couch": false, // CouchDB
     "devel": true, // Development/debugging (alert, confirm, etc)
     "dojo": false, // Dojo Toolkit
@@ -86,5 +86,11 @@
                 "it": true,
                 "JSON": true,
                 "window": true,
-                "angular": true} // additional predefined global variables
+                "angular": true,
+                "sinon":true,
+                "beforeEach": true,
+                "afterEach":true,
+                "inject":true,
+                "expect":true,
+                "env":true} // additional predefined global variables
 }

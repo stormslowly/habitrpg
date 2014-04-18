@@ -3,19 +3,24 @@
 /* Make user and settings available for everyone through root scope.
  */
 
-habitrpg.controller("RootCtrl", ['$scope', '$rootScope', '$location', 'User', '$http', '$state', '$stateParams', 'Notification', 'Groups', 'Shared', 'Content', '$modal', '$timeout',
-  function($scope, $rootScope, $location, User, $http, $state, $stateParams, Notification, Groups, Shared, Content, $modal, $timeout) {
+habitrpg.controller("RootCtrl", ['$scope', '$rootScope', '$location', 'User', '$http', '$state', '$stateParams', 'Notification', 'Groups', 'Shared', 'Content', '$modal', '$timeout','$window',
+  function($scope, $rootScope, $location, User, $http, $state, $stateParams, Notification, Groups, Shared, Content, $modal, $timeout,$window) {
     var user = User.user;
 
     var initSticky = _.once(function(){
-      if (window.env.IS_MOBILE || User.user.preferences.stickyHeader === false) return;
+      if (window.env.IS_MOBILE ||
+        User.user.preferences.stickyHeader === false){
+        return;
+      }
       $('.header-wrap').sticky({topSpacing:0});
     })
+
     $rootScope.$on('userUpdated',initSticky);
 
     $rootScope.$on('$stateChangeSuccess',
       function(event, toState, toParams, fromState, fromParams){
-        if (!!fromState.name) window.ga && ga('send', 'pageview', {page: '/#/'+toState.name});
+        if (!!fromState.name)
+          window.ga && ga('send', 'pageview', {page: '/#/'+toState.name});
       });
 
     $rootScope.User = User;
@@ -35,24 +40,26 @@ habitrpg.controller("RootCtrl", ['$scope', '$rootScope', '$location', 'User', '$
     // indexOf helper
     $scope.indexOf = function(haystack, needle){
       return haystack && ~haystack.indexOf(needle);
-    }
+    };
 
     // styling helpers
     $scope.userLevelStyle = function(user,style){
       style = style || '';
-      if(user && user.backer && user.backer.npc)
+      if(user && user.backer && user.backer.npc){
         style += ' label-npc';
-      if(user && user.contributor && user.contributor.level)
+      }
+      if(user && user.contributor && user.contributor.level){
         style += ' label-contributor-'+user.contributor.level;
+      }
       return style;
-    }
+    };
 
     // count pets, mounts collected totals, etc
     $rootScope.countExists = function(items) {return _.reduce(items,function(m,v){return m+(v?1:0)},0)}
 
     $rootScope.petCount = Shared.countPets(null, User.user.items.pets);
 
-    $rootScope.$watch('user.items.pets', function(pets){ 
+    $rootScope.$watch('user.items.pets', function(pets){
       $rootScope.petCount = Shared.countPets($rootScope.countExists(pets), User.user.items.pets);
     }, true);
 
@@ -130,7 +137,7 @@ habitrpg.controller("RootCtrl", ['$scope', '$rootScope', '$location', 'User', '$
 //          if (subscription) url += '?plan=test';
           $scope.$apply(function(){
             $http.post(url, data).success(function() {
-              window.location.reload(true);
+              $window.location.reload(true);
             }).error(function(err) {
               alert(err);
             });
@@ -143,7 +150,7 @@ habitrpg.controller("RootCtrl", ['$scope', '$rootScope', '$location', 'User', '$
       if (!confirm(window.env.t('sureCancelSub'))) return;
       //TODO use Stripe API to keep subscription till end of their month
       $http.post('/api/v2/user/cancel-subscription').success(function(){
-        window.location.reload(true);
+        $window.location.reload(true);
       })
     }
 
@@ -152,7 +159,11 @@ habitrpg.controller("RootCtrl", ['$scope', '$rootScope', '$location', 'User', '$
       if (backer && backer.npc) return backer.npc;
       var l = contrib && contrib.level;
       if (l && l > 0) {
-        var level = (l < 3) ? window.env.t('friend') : (l < 5) ? window.env.t('elite') : (l < 7) ? window.env.t('champion') : (l < 8) ? window.env.t('legendary') : window.env.t('heroic');
+        var level = (l < 3) ? window.env.t('friend') :
+                    (l < 5) ? window.env.t('elite') :
+                    (l < 7) ? window.env.t('champion') :
+                    (l < 8) ? window.env.t('legendary') :
+                    window.env.t('heroic');
         return level + ' ' + contrib.text;
       }
     }
@@ -225,7 +236,7 @@ habitrpg.controller("RootCtrl", ['$scope', '$rootScope', '$location', 'User', '$
 
       $http.post('/api/v2/user/class/cast/'+spell.key+'?targetType='+type+'&targetId='+targetId)
       .success(function(){
-        var msg = window.env.t('youCast', {spell: spell.text}); 
+        var msg = window.env.t('youCast', {spell: spell.text});
         switch (type) {
          case 'task': msg = window.env.t('youCastTarget', {spell: spell.text, target: target.text});break;
          case 'user': msg = window.env.t('youCastTarget', {spell: spell.text, target: target.profile.name});break;
