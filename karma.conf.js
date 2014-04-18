@@ -16,7 +16,7 @@ module.exports = function(config) {
       'public/bower_components/angular-loading-bar/build/loading-bar.min.js',
       'public/bower_components/angular-resource/angular-resource.min.js',
       'public/bower_components/angular-sanitize/angular-sanitize.js',
-      'public/bower_components/bootstrap/docs/assets/js/bootstrap.js',
+      'public/bower_components/bootstrap/dist/js/bootstrap.js',
       'public/bower_components/angular-bootstrap/ui-bootstrap.js',
       'public/bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
       'public/bower_components/angular-ui-router/release/angular-ui-router.js',
