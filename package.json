@@ -64,7 +64,7 @@
   "scripts": {
     "test": "mocha",
     "start": "grunt run:dev",
-    "postinstall": "./node_modules/bower/bin/bower install -f"
+    "postinstall": "./node_modules/bower/bin/bower install"
   },
   "devDependencies": {
     "protractor": "~0.14.0",
