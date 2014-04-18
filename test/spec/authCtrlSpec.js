@@ -7,6 +7,7 @@ describe('Auth Controller', function() {
   describe('AuthCtrl', function(){
     var scope, ctrl, user, $httpBackend, $window;
 
+
     beforeEach(inject(function(_$httpBackend_, $rootScope, $controller) {
       $httpBackend = _$httpBackend_;
       scope = $rootScope.$new();
@@ -17,6 +18,17 @@ describe('Auth Controller', function() {
 
       ctrl = $controller('AuthCtrl', {$scope: scope, $window: $window, User: user});
     }));
+
+    var originalTranslations;
+    before(function(){
+      originalTranslations = window.env.translations;
+      window.env.translations= {'errorUpCase':'Error',
+                                };
+    });
+
+    after(function(){
+      window.env.translations = originalTranslations;
+    });
 
     it('should log in users with correct uname / pass', function() {
       $httpBackend.expectPOST('/api/v2/user/auth/local').respond({id: 'abc', token: 'abc'});

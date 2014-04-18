@@ -18,6 +18,17 @@ describe('Inventory Controller', function() {
     ctrl = $controller('InventoryCtrl', {$scope: scope, User: {user: user}, $window: mockWindow});
   }));
 
+  var _translations=null;
+  before(function(){
+    _translations = window.env.translations;
+    window.env.translations = {};
+  });
+
+  after(function(){
+    window.env.translations = _translations;
+  });
+
+
   it('starts without any item selected', function(){
     expect(scope.selectedEgg).to.eql(null);
     expect(scope.selectedPotion).to.eql(null);

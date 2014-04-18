@@ -90,6 +90,8 @@
                 "sinon":true,
                 "beforeEach": true,
                 "afterEach":true,
+                "before":true,
+                "after":true,
                 "inject":true,
                 "expect":true,
                 "env":true} // additional predefined global variables
