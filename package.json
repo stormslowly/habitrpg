@@ -62,7 +62,7 @@
     "npm": "1.2.x"
   },
   "scripts": {
-    "test": "mocha",
+    "test": "mocha && ./node_modules/.bin/karma start --browsers Chrome --single-run",
     "start": "grunt run:dev",
     "postinstall": "./node_modules/bower/bin/bower install"
   },
