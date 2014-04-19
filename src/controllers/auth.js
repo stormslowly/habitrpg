@@ -121,19 +121,33 @@ api.registerUser = function(req, res) {
 api.loginLocal = function(req, res, next) {
   var username = req.body.username;
   var password = req.body.password;
+
+  var email = null;
+  try{
+    email = validator.check(username).isEmail()?username : null;
+  }catch(err){
+
+  };
+
+
   if (!(username && password)){
     return res.json(401, { err:'Missing :username or :password in request body, please provide both'});
   }
-  User.findOne({'auth.local.username': username}, function(err, user){
+
+  var saltQuery = email? {'auth.local.email': email }: {'auth.local.username': username};
+
+  User.findOne(saltQuery, function(err, user){
     if (err) {return next(err);}
     if (!user){
       return res.json(401, {err:"Username or password incorrect. Click 'Forgot Password' for help with either. (Note: usernames are case-sensitive)"});
     }
     // We needed the whole user object first so we can get his salt to encrypt password comparison
-    User.findOne({
-      'auth.local.username': username,
-      'auth.local.hashed_password': utils.encryptPassword(password, user.auth.local.salt)
-    }, function(err, user){
+    var authQuery = _.assign(saltQuery,{
+        'auth.local.hashed_password':
+            utils.encryptPassword(password, user.auth.local.salt)
+      } );
+
+    User.findOne( authQuery , function(err, user){
       if (err) {return next(err);}
       if (!user){
         return res.json(401,{err:"Username or password incorrect. Click 'Forgot Password' for help with either. (Note: usernames are case-sensitive)"});
