@@ -11,12 +11,12 @@ figure.herobox(ng-click='spell ? castEnd(profile, "user", $event) : clickMember(
     span(ng-if='profile.stats.buffs.snowball')
       span.snowman
     span(ng-if='!profile.stats.buffs.snowball')
-      // Avatar
-      span(class='skin_{{profile.preferences.skin}}')
-
       // Back Accessory
       span(class='{{profile.items.gear.equipped.back}}', ng-if='!profile.preferences.costume')
       span(class='{{profile.items.gear.costume.back}}', ng-if='profile.preferences.costume')
+
+      // Avatar
+      span(class='skin_{{profile.preferences.skin}}')
 
       // Shirt
       span(class='{{profile.preferences.size}}_shirt_{{profile.preferences.shirt}}')
@@ -24,6 +24,10 @@ figure.herobox(ng-click='spell ? castEnd(profile, "user", $event) : clickMember(
       // Armor
       span(class='{{profile.preferences.size}}_{{profile.items.gear.equipped.armor}}', ng-if='!profile.preferences.costume')
       span(class='{{profile.preferences.size}}_{{profile.items.gear.costume.armor}}', ng-if='profile.preferences.costume')
+
+      // Cape colar
+      span(class='{{profile.items.gear.equipped.back}}_collar', ng-if='!profile.preferences.costume')
+      span(class='{{profile.items.gear.costume.back}}_collar', ng-if='profile.preferences.costume')
 
       // Hair
       span(class='head_0')
@@ -35,6 +39,13 @@ figure.herobox(ng-click='spell ? castEnd(profile, "user", $event) : clickMember(
       // Helm
       span(class='{{profile.items.gear.equipped.head}}', ng-if='!profile.preferences.costume')
       span(class='{{profile.items.gear.costume.head}}', ng-if='profile.preferences.costume')
+
+      // Head Accessory
+      span(class='{{profile.items.gear.equipped.headAccessory}}', ng-if='!profile.preferences.costume')
+      span(class='{{profile.items.gear.costume.headAccessory}}', ng-if='profile.preferences.costume')
+
+      // Flower
+      span(class='hair_flower_{{profile.preferences.hair.flower}}')
 
       // Shield
       span(class='{{profile.items.gear.equipped.shield}}', ng-if='!profile.preferences.costume')

@@ -3,6 +3,7 @@
         "js": [
             "bower_components/jquery/dist/jquery.min.js",
             "bower_components/jquery.cookie/jquery.cookie.js",
+            "bower_components/pnotify/jquery.pnotify.min.js",
             "bower_components/bootstrap-growl/jquery.bootstrap-growl.js",
             "bower_components/bootstrap-tour/build/js/bootstrap-tour.js",
             "bower_components/angular/angular.js",
@@ -20,7 +21,6 @@
             "bower_components/ngInfiniteScroll/ng-infinite-scroll.js",
             "bower_components/select2/select2.js",
             "bower_components/angular-ui-select2/src/select2.js",
-            "bower_components/JavaScriptButtons/dist/paypal-button.min.js",
 
             "bower_components/angular-bootstrap/ui-bootstrap.js",
             "bower_components/angular-bootstrap/ui-bootstrap-tpls.js",
@@ -67,6 +67,8 @@
         "css": [
             "bower_components/bootstrap/dist/css/bootstrap.css",
             "app.css",
+            "bower_components/pnotify/jquery.pnotify.default.css",
+            "bower_components/pnotify/jquery.pnotify.default.icons.css",
             "bower_components/habitrpg-shared/dist/habitrpg-shared.css"
         ]
     },
