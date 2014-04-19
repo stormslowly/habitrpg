@@ -8,9 +8,13 @@ utils.setupConfig();
 var logging = require('./logging');
 var isProd = nconf.get('NODE_ENV') === 'production';
 var isDev = nconf.get('NODE_ENV') === 'development';
+var fs = require('fs');
+
+var PIDFILE = ".pids";
 
 if (cluster.isMaster && (isDev || isProd)) {
   // Fork workers.
+  fs.writeFileSync(PIDFILE,"");
   _.times(_.min([require('os').cpus().length,2]), function(){
     cluster.fork();
   });
@@ -21,6 +25,9 @@ if (cluster.isMaster && (isDev || isProd)) {
   });
 
 } else {
+
+
+  fs.appendFileSync(PIDFILE, ""+process.pid+"\n");
 
   require('./habitrpgServer.js').createServer().startService(function(){
 
