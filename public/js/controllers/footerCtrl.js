@@ -12,7 +12,7 @@
     $scope.deferredScripts = function(){
 
       // Stripe
-      $.getScript('//checkout.stripe.com/v2/checkout.js');
+      // $.getScript('//checkout.stripe.com/v2/checkout.js');
 
       // Google Analytics, only in production
       if (window.env.NODE_ENV === 'production') {
@@ -27,7 +27,7 @@
       // Scripts only for desktop
       if (!window.env.IS_MOBILE) {
         // Add This
-        $.getScript("//s7.addthis.com/js/250/addthis_widget.js#pubid=lefnire");
+        // $.getScript("//s7.addthis.com/js/250/addthis_widget.js#pubid=lefnire");
 
         // Google Charts
         $.getScript("//www.google.com/jsapi", function() {

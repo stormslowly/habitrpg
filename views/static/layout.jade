@@ -27,15 +27,15 @@ html(ng-app='habitrpgStatic')
             span.icon-bar
             span.icon-bar
             span.icon-bar
-          a.navbar-brand(href='/static/front') HabitRPG
+          a.navbar-brand(href='/static/front') RPGLife
         .collapse.navbar-collapse(collapse="isNavbarCollapsed")
           ul.nav.navbar-nav
             li(class='#{menuItem=="features" ? "active" : ""}')
               a(href='/static/features')=env.t('companyAbout')
-            li(class='#{menuItem=="videos" ? "active" : ""}')
-              a(href='/static/videos')=env.t('companyVideos')
-            li
-              a(href='http://blog.habitrpg.com/')=env.t('companyBlog')
+            //li(class='#{menuItem=="videos" ? "active" : ""}')
+            //  a(href='/static/videos')=env.t('companyVideos')
+            //li
+            //  a(href='http://blog.habitrpg.com/')=env.t('companyBlog')
             li(class='#{menuItem=="plans" ? "active" : ""}')
               a(href='/static/plans')=env.t('groupPlans')
             //li(class='#{menuItem=="contact" ? "active" : ""}')

@@ -127,8 +127,7 @@ api.loginLocal = function(req, res, next) {
     email = validator.check(username).isEmail()?username : null;
   }catch(err){
 
-  };
-
+  }
 
   if (!(username && password)){
     return res.json(401, { err:'Missing :username or :password in request body, please provide both'});
@@ -141,7 +140,7 @@ api.loginLocal = function(req, res, next) {
     if (!user){
       return res.json(401, {err:"Username or password incorrect. Click 'Forgot Password' for help with either. (Note: usernames are case-sensitive)"});
     }
-    // We needed the whole user object first so we can get his salt to encrypt password comparison
+
     var authQuery = _.assign(saltQuery,{
         'auth.local.hashed_password':
             utils.encryptPassword(password, user.auth.local.salt)

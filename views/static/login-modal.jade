@@ -3,10 +3,7 @@ script(id='modals/login.html', type='text/ng-template')
     button.close(type='button', ng-click='$close()') ×
     h4.modal-title=env.t('loginAndReg')
   .modal-body(ng-controller='AuthCtrl')
-    a(href='/auth/facebook')
-      img(src='/bower_components/habitrpg-shared/img/facebook-login-register.jpeg', alt=env.t('loginFacebookAlt'))
-    //can we add in google auth? I like google auth
-    h3 Or
+
     ul.nav.nav-tabs
       li.active
         a(data-toggle='tab',data-target='#login-tab')=env.t('login')
@@ -27,8 +24,6 @@ script(id='modals/login.html', type='text/ng-template')
           .form-group
             input.btn.btn-primary(type='submit', value=env.t('login'))
 
-          small=env.t('passMan')
-          br
           br
 
         // good god accordions have html ceremony
@@ -37,7 +32,7 @@ script(id='modals/login.html', type='text/ng-template')
             .panel-heading
               h3.panel-title
                 a(data-toggle="collapse" data-parent="#forgot-password" href="#forgot-password-panel")=env.t('forgotPass')
-          
+
             .panel-body.collapse#forgot-password-panel
               form(ng-submit='passwordReset(passwordResetEmail)')
                 //.alert.alert-success {.success.passwordReset}
