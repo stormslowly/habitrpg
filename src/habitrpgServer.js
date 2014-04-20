@@ -67,7 +67,7 @@ exports.createServer = function(logger,nconf){
 
   // ------------  Server Configuration ------------
 
-  app.set("port", nconf.get('PORT'));
+  app.set("port", process.env.PORT || nconf.get('PORT'));
   middleware.apiThrottle(app);
   app.use( middleware.domainMiddleware(server,mongoose) );
 
