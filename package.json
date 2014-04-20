@@ -66,6 +66,7 @@
   "scripts": {
     "test": "mocha && ./node_modules/.bin/karma start --browsers PhantomJS --single-run",
     "start": "grunt run:dev",
+    "preinstall":"rm ./node_modules/habitrpg-shared -rf",
     "postinstall": "./node_modules/bower/bin/bower install && ./node_modules/grunt-cli/bin/grunt build:dev && cp config.json.example config.json"
   },
   "devDependencies": {
