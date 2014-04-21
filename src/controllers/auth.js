@@ -102,6 +102,15 @@ api.registerUser = function(req, res) {
         }
       };
       user = new User(newUser);
+
+      // temporary for conventions
+      if (req.subdomains[0] == 'con') {
+        _.each(user.dailys, function(h){
+          h.repeat = {m:false,t:false,w:false,th:false,f:false,s:false,su:false};
+        })
+        user.extra = {signupEvent: 'wondercon'};
+      }
+
       user.save(cb);
       ga.event('register', 'Local').send();
     }

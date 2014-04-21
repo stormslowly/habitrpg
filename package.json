@@ -6,7 +6,7 @@
   "dependencies": {
     "habitrpg-shared": "git://github.com/stormslowly/habitrpg-shared#develop",
     "connect-mongo": "*",
-    "express": "3.4.0",
+    "express": "3.5.0",
     "gzippo": "*",
     "guid": "*",
     "moment": "~2.4.0",
@@ -51,7 +51,9 @@
     "universal-analytics": "~0.3.2",
     "paypal-express-checkout": "git://github.com/HabitRPG/node-paypal-express-checkout#habitrpg",
     "paypal-recurring": "git://github.com/jaybryant/paypal-recurring#656b496f43440893c984700191666a5c5c535dca",
-    "paypal-ipn": "~1.0.1"
+    "paypal-ipn": "~1.0.1",
+    "coupon-code": "~0.3.0",
+    "mongoose-id-autoinc": "~2013.7.14-4"
   },
   "private": true,
   "subdomain": "habitrpg",
